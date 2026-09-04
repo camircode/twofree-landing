@@ -1,0 +1,168 @@
+---
+import "@fontsource-variable/urbanist/wght.css";
+import "@fontsource/open-sans/400.css";
+import "@fontsource/open-sans/600.css";
+import "../styles/global.css";
+
+import logoUrl from "../assets/2free-con-fondi.svg?url";
+import socialImageAsset from "../assets/2free-con-texto-debajo.png";
+
+type StructuredData = Record<string, unknown> | Record<string, unknown>[];
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  imageAlt?: string;
+  ogType?: "website" | "article";
+  structuredData?: StructuredData;
+}
+
+const {
+  title,
+  description,
+  canonicalPath = Astro.url.pathname,
+  imageAlt = "2 Free, aplicación privada de finanzas personales",
+  ogType = "website",
+  structuredData: pageStructuredData,
+} = Astro.props;
+const canonical = new URL(canonicalPath, Astro.site);
+const siteUrl = new URL("/", Astro.site);
+const socialImage = new URL(socialImageAsset.src, Astro.site);
+const sourceUrl =
+  import.meta.env.PUBLIC_SOURCE_URL?.trim() || "https://github.com/camircode/2free";
+const organizationId = new URL("/#organization", Astro.site).toString();
+const websiteId = new URL("/#website", Astro.site).toString();
+const webPageId = `${canonical.toString()}#webpage`;
+const graph = [
+  {
+    "@type": "Organization",
+    "@id": organizationId,
+    name: "2 Free",
+    url: siteUrl,
+    logo: { "@type": "ImageObject", url: new URL(logoUrl, Astro.site) },
+    ...(sourceUrl ? { sameAs: [sourceUrl] } : {}),
+  },
+  {
+    "@type": "WebSite",
+    "@id": websiteId,
+    name: "2 Free",
+    url: siteUrl,
+    inLanguage: "es",
+    publisher: { "@id": organizationId },
+  },
+  {
+    "@type": "WebPage",
+    "@id": webPageId,
+    url: canonical,
+    name: title,
+    description,
+    inLanguage: "es",
+    isPartOf: { "@id": websiteId },
+    about: { "@id": organizationId },
+  },
+  ...(Array.isArray(pageStructuredData)
+    ? pageStructuredData
+    : pageStructuredData
+      ? [pageStructuredData]
+      : []),
+];
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": graph,
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#f9edde" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171914" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content={description} />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={logoUrl} type="image/svg+xml" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="2 Free" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content={String(socialImageAsset.width)} />
+    <meta property="og:image:height" content={String(socialImageAsset.height)} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <title>{title}</title>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <header class="site-header shell">
+      <a class="brand" href="/" aria-label="2 Free, inicio">
+        <img src={logoUrl} width="44" height="46" alt="" />
+        <span>2 Free</span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <a href="/#posibilidades">Posibilidades</a>
+        <a href="/#privacidad">Privacidad</a>
+        <a href="/#descargas">Descargas</a>
+        <a href="/autohospedaje/">Autohospedaje</a>
+        <a href={sourceUrl} aria-label="Ver repositorio de 2 Free en GitHub">GitHub</a>
+      </nav>
+    </header>
+    <main id="contenido"><slot /></main>
+    <footer class="site-footer shell">
+      <div>
+        <strong>2 Free</strong>
+        <p>Finanzas personales abiertas, portables y bajo su control.</p>
+      </div>
+      <div class="footer-links">
+        <a href="/autohospedaje/">Documentación</a>
+        <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPLv3</a>
+        <a href={sourceUrl} aria-label="Ver repositorio de 2 Free en GitHub">GitHub</a>
+      </div>
+    </footer>
+    <script>
+      import gsap from "gsap";
+
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+        timeline
+          .fromTo(
+            ".hero-copy h1",
+            { clipPath: "inset(0 0 100% 0)", y: 24 },
+            { clipPath: "inset(0 0 0% 0)", y: 0, duration: 0.72 },
+          )
+          .fromTo(
+            ".hero-copy :is(.hero-lead, .actions, .hero-notes)",
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.4, stagger: 0.08 },
+            "-=0.34",
+          )
+          .fromTo(
+            ".balance-card",
+            { opacity: 0, y: 34, rotation: -8, filter: "blur(6px)" },
+            { opacity: 1, y: 0, rotation: -3, filter: "blur(0px)", duration: 0.62 },
+            "-=0.5",
+          )
+          .fromTo(
+            ".hero-scene :is(.budget-slip, .notification-chip)",
+            { opacity: 0, scale: 0.82 },
+            { opacity: 1, scale: 1, duration: 0.36, stagger: 0.1 },
+            "-=0.28",
+          );
+      }
+    </script>
+  </body>
+</html>

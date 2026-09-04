@@ -1,0 +1,23 @@
+# The build stage runs `pnpm install` and `astro build` from a clean tree. Any
+# of these entering the context either slows the build or, worse, lets a stale
+# host artifact win over one the build would have produced.
+.git
+node_modules
+dist
+.astro
+
+# Host-installed dependencies are for a different libc and a different Node
+# than node:24-alpine; copying them in produces binaries that fail at runtime
+# rather than at build time.
+**/node_modules
+
+# Nothing outside the build stage is reachable from the image, but the context
+# is uploaded to the daemon in full, so keeping secrets out of it is free.
+.env
+.env.*
+
+# Delivery config: read by Jenkins and by humans, never by the build.
+Jenkinsfile
+.trivyignore.yaml
+README.md
+metadata.json

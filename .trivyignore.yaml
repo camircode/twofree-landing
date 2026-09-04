@@ -1,0 +1,16 @@
+# Exceptions for the Trivy stage in the Jenkinsfile, which fails the build on
+# HIGH and CRITICAL findings that have a fix available.
+#
+# Empty on purpose: nothing is being waived today. Every entry added here must
+# carry two things, because a scanner whose exceptions are undated and
+# unexplained is a scanner people learn to click past:
+#
+#   statement — why the vulnerable code path is not reachable from a static
+#               nginx serving pre-built HTML.
+#   expired_at — the date the waiver stops applying, so it comes back for
+#                review instead of outliving the reason it was granted.
+#
+# vulnerabilities:
+#   - id: CVE-0000-00000
+#     statement: Not reachable; the affected module is never loaded.
+#     expired_at: 2026-01-01

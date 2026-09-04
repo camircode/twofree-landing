@@ -1,0 +1,12 @@
+# There is no workspace here — this file exists because pnpm 11 reads its
+# install settings from it and nowhere else.
+
+# esbuild's postinstall is what links the platform binary Vite shells out to;
+# with the script ignored the build dies on "you installed esbuild for another
+# platform". sharp stays off: nothing on this site asks Astro for an image
+# transform, so its native build would be a compile step paid for nothing.
+allowBuilds:
+  esbuild: true
+  sharp: false
+
+autoInstallPeers: false

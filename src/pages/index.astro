@@ -1,0 +1,209 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const webUrl = import.meta.env.PUBLIC_WEB_URL?.trim() || "http://localhost:3000";
+const guestUrl = new URL("guest", webUrl.endsWith("/") ? webUrl : `${webUrl}/`).toString();
+const repository = import.meta.env.PUBLIC_GITHUB_REPOSITORY?.trim() || "camircode/2free";
+const releaseRepository = repository && /^[\w.-]+\/[\w.-]+$/u.test(repository) ? repository : undefined;
+const releaseBaseUrl = releaseRepository
+  ? `https://github.com/${releaseRepository}/releases/latest/download`
+  : undefined;
+const canonicalUrl = new URL("/", Astro.site).toString();
+const sourceUrl =
+  import.meta.env.PUBLIC_SOURCE_URL?.trim() || "https://github.com/camircode/2free";
+const softwareStructuredData = {
+  "@type": "SoftwareApplication",
+  "@id": `${canonicalUrl}#software`,
+  name: "2 Free",
+  url: canonicalUrl,
+  description: "Aplicación de finanzas personales local-first y de código abierto para gestionar cuentas, presupuestos, tarjetas y alertas.",
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "Web, Linux, Android",
+  inLanguage: "es",
+  isAccessibleForFree: true,
+  license: "https://www.gnu.org/licenses/agpl-3.0.html",
+  publisher: { "@id": `${canonicalUrl}#organization` },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  featureList: [
+    "Presupuestos y cuentas",
+    "Gestión de tarjetas",
+    "Alertas financieras configurables",
+    "Almacenamiento local cifrado",
+    "Sincronización opcional",
+    "Autohospedaje",
+  ],
+  ...(sourceUrl ? { sameAs: sourceUrl } : {}),
+  ...(releaseBaseUrl
+    ? { downloadUrl: [`${releaseBaseUrl}/2-Free.AppImage`, `${releaseBaseUrl}/2-Free.apk`] }
+    : {}),
+};
+const features = [
+  { number: "01", title: "Presupuestos que respiran", text: "Límites, avance y alertas por categoría sin esconder el contexto detrás de una gráfica." },
+  { number: "02", title: "Cada tarjeta, bien entendida", text: "Crédito revolvente, cargo y débito conservan reglas, fechas y costos propios." },
+  { number: "03", title: "Rendimiento con reglas claras", text: "Tasas, topes y base anual quedan asociados a cada cuenta, sin cálculos ocultos." },
+  { number: "04", title: "Avisos con intención", text: "Reglas configurables para pagos, cortes, presupuestos y rendimiento. Menos ruido, más señales." },
+];
+---
+
+<BaseLayout
+  title="App privada de finanzas personales | 2 Free"
+  description="App de finanzas personales local-first y de código abierto para organizar cuentas, presupuestos, tarjetas y alertas sin ceder el control de sus datos."
+  structuredData={softwareStructuredData}
+>
+  <section class="hero shell">
+    <div class="hero-copy">
+      <p class="eyebrow"><span></span> Finanzas personales, sin caja negra</p>
+      <h1>Organice sus finanzas personales. <em>Conserve el control.</em></h1>
+      <p class="hero-lead">
+        Presupuestos, cuentas, tarjetas y alertas en un registro privado que funciona en web,
+        escritorio y Android. Sus datos pueden quedarse en su dispositivo o sincronizarse donde
+        usted decida.
+      </p>
+      <div class="actions">
+        <a class="button primary" href={guestUrl}>Probar demo <span aria-hidden="true">↗</span></a>
+        <a class="button secondary" href="#descargas">Descargar aplicación</a>
+      </div>
+      <ul class="hero-notes" aria-label="Características principales">
+        <li>Local-first</li><li>Sin rastreadores</li><li>AGPLv3</li>
+      </ul>
+      <p class="guest-note"><strong>Sin cuenta ni contraseña.</strong> Explore datos de ejemplo y pruebe los flujos principales; nada se guarda.</p>
+    </div>
+
+    <div class="hero-scene" aria-label="Ejemplo ilustrativo de un resumen financiero doméstico para julio">
+      <div class="sun-orbit"></div>
+      <article class="balance-card">
+        <div class="card-heading"><span>Ejemplo doméstico · julio</span><span class="privacy-dot">Cifrado</span></div>
+        <strong>$ 18,240<small> MXN</small></strong>
+        <p class="balance-caption">Disponible después de compromisos</p>
+        <div class="cash-flow" aria-label="De 45 mil pesos de ingreso, 26 mil 760 están comprometidos y 18 mil 240 permanecen disponibles">
+          <span class="cash-flow__committed" style="--share: 59.5%"></span>
+          <span class="cash-flow__available" style="--share: 40.5%"></span>
+        </div>
+        <dl class="cash-flow-legend">
+          <div><dt>Ingresos</dt><dd>$45,000</dd></div>
+          <div><dt>Comprometido</dt><dd>$26,760</dd></div>
+          <div><dt>Disponible</dt><dd>$18,240</dd></div>
+        </dl>
+      </article>
+      <article class="budget-slip">
+        <span>Alimentos · julio</span><strong>72%</strong>
+        <div><i></i></div><small>En curso, dentro del límite</small>
+      </article>
+      <article class="notification-chip"><span>●</span><div><b>Próximo compromiso</b><small>Tarjeta · $2,150 en 3 días</small></div></article>
+      <div class="leaf leaf-one"></div><div class="leaf leaf-two"></div>
+    </div>
+  </section>
+
+  <section class="manifesto shell" aria-labelledby="manifiesto">
+    <p class="section-index">01 / Una idea simple</p>
+    <div>
+      <h2 id="manifiesto">La libertad financiera también significa <em>libertad tecnológica.</em></h2>
+      <p>Sus registros no deberían depender de un proveedor para seguir siendo útiles. 2 Free separa la experiencia de sus datos para que pueda moverlos, respaldarlos y decidir dónde viven.</p>
+    </div>
+  </section>
+
+  <section class="routes shell" aria-label="Formas de usar 2 Free">
+    <article class="route route-local">
+      <p class="route-label">Para empezar en privado</p>
+      <h3>Local primero.<br />Internet después.</h3>
+      <p>Las aplicaciones de escritorio y Android guardan sus registros en SQLCipher. Puede consultar y registrar movimientos sin conexión ni cuenta remota.</p>
+      <div class="route-art local-art" aria-label="Flujo local: registro financiero, cifrado SQLCipher y acceso sin conexión">
+        <div><span>1</span><b>Registre</b><small>cuentas y movimientos</small></div>
+        <i aria-hidden="true">→</i>
+        <div><span>2</span><b>Cifre</b><small>con SQLCipher local</small></div>
+        <i aria-hidden="true">→</i>
+        <div><span>3</span><b>Consulte</b><small>incluso sin internet</small></div>
+      </div>
+    </article>
+    <article class="route route-cloud">
+      <p class="route-label">Para acceder desde cualquier lugar</p>
+      <h3>Su servidor.<br />Sus reglas.</h3>
+      <p>Sincronice desde escritorio o Android con la nube administrada, o despliegue PostgreSQL, API y web con un solo Compose bajo su control.</p>
+      <div class="route-art cloud-art" aria-label="Flujo de sincronización opcional entre dispositivos, API y PostgreSQL">
+        <div><span>Escritorio y Android</span><small>SQLCipher local</small></div>
+        <i aria-hidden="true">↔</i>
+        <div><span>API protegida</span><small>sesión por propietario</small></div>
+        <i aria-hidden="true">↔</i>
+        <div><span>PostgreSQL</span><small>campos cifrados</small></div>
+      </div>
+    </article>
+  </section>
+
+  <section id="descargas" class="downloads shell" aria-labelledby="titulo-descargas">
+    <div class="downloads-heading">
+      <p class="section-index">Para usar 2 Free en su dispositivo</p>
+      <h2 id="titulo-descargas">Sus finanzas también funcionan <em>fuera del navegador.</em></h2>
+      <p>Instale 2 Free para conservar una base SQLCipher local y trabajar sin conexión. La sincronización sigue siendo opcional.</p>
+    </div>
+    <div class="download-options">
+      <article>
+        <span class="download-platform">Linux</span>
+        <h3>AppImage</h3>
+        <p>Una aplicación portátil para distribuciones Linux de escritorio.</p>
+        {releaseBaseUrl ? (
+          <a class="button primary" href={`${releaseBaseUrl}/2-Free.AppImage`}>Descargar AppImage</a>
+        ) : (
+          <p class="download-status">La descarga aparecerá cuando se configure el repositorio público.</p>
+        )}
+      </article>
+      <article>
+        <span class="download-platform">Android</span>
+        <h3>APK</h3>
+        <p>La experiencia local-first adaptada a pantallas táctiles y uso móvil.</p>
+        {releaseBaseUrl ? (
+          <a class="button primary" href={`${releaseBaseUrl}/2-Free.apk`}>Descargar APK</a>
+        ) : (
+          <p class="download-status">La descarga aparecerá cuando se configure el repositorio público.</p>
+        )}
+      </article>
+    </div>
+    <p class="downloads-note">Los archivos se publican en GitHub Releases. Verifique la firma y las notas de la versión antes de instalar.</p>
+  </section>
+
+  <section id="posibilidades" class="capabilities shell">
+    <div class="section-heading">
+      <p class="section-index">02 / Herramientas con criterio</p>
+      <h2>Todo lo necesario.<br /><em>Nada que estorbe.</em></h2>
+    </div>
+    <div class="feature-list">
+      {features.map((feature) => (
+        <article>
+          <span>{feature.number}</span><h3>{feature.title}</h3><p>{feature.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="privacidad" class="privacy-section">
+    <div class="shell privacy-grid">
+      <div class="privacy-copy">
+        <p class="section-index light">03 / Privacidad por arquitectura</p>
+        <h2>Los datos sensibles no son <em>material publicitario.</em></h2>
+        <p>2 Free cifra campos financieros con AES-256-GCM antes de persistirlos. Las sesiones están aisladas por propietario y la telemetría comercial no forma parte del producto.</p>
+        <ul><li>Cifrado autenticado de 256 bits</li><li>Datos portables y versionados</li><li>Claves administradas por quien despliega</li></ul>
+      </div>
+      <div class="vault" aria-hidden="true">
+        <div class="vault-ring"><div><span>2</span><small>FREE</small></div></div>
+        <p>Usted conserva la llave</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="codigo" class="open-source shell">
+    <div class="open-mark" aria-hidden="true">{ }</div>
+    <div>
+      <p class="section-index">04 / Abierto de verdad</p>
+      <h2>El código se puede leer.<br />Los datos se pueden llevar.</h2>
+    </div>
+    <div class="open-copy">
+      <p>La licencia AGPLv3 protege la posibilidad de estudiar, modificar y compartir 2 Free. Si un servicio ofrece una versión modificada por red, debe ofrecer también su código fuente correspondiente.</p>
+      <a href="/autohospedaje/">Leer la guía de autohospedaje <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="closing shell">
+    <p>Una relación más tranquila con sus finanzas empieza por decidir quién conserva los datos.</p>
+    <h2>Que sea usted.</h2>
+    <div class="actions centered"><a class="button primary" href={guestUrl}>Explorar la demo</a><a class="button secondary" href="/autohospedaje/">Desplegar en casa</a></div>
+  </section>
+</BaseLayout>

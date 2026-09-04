@@ -1,0 +1,4 @@
+Keeps public/ in git even while it is empty. The Dockerfile does `COPY public
+./public`, and COPY fails the build outright when the source path is missing —
+which is what a fresh clone would produce, since git does not track empty
+directories.

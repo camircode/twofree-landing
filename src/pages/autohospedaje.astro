@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const siteUrl = new URL("/", Astro.site).toString();
+const structuredData = [
+  {
+    "@type": "TechArticle",
+    "@id": `${canonicalUrl}#article`,
+    headline: "Cómo autohospedar 2 Free con Docker Compose",
+    description: "Guía para desplegar 2 Free con Docker Compose, PostgreSQL, API Nest y web Next.",
+    url: canonicalUrl,
+    inLanguage: "es",
+    mainEntityOfPage: { "@id": `${canonicalUrl}#webpage` },
+    author: { "@id": `${siteUrl}#organization` },
+    publisher: { "@id": `${siteUrl}#organization` },
+  },
+  {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Autohospedaje", item: canonicalUrl },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Cómo autohospedar 2 Free con Docker Compose"
+  description="Guía paso a paso para desplegar 2 Free con Docker Compose, PostgreSQL, API Nest y web Next en infraestructura bajo su control."
+  ogType="article"
+  structuredData={structuredData}
+>
+  <article class="docs shell">
+    <header>
+      <p class="eyebrow"><span></span> Guía de autohospedaje</p>
+      <h1>De repositorio a servicio privado.</h1>
+      <p>El camino recomendado usa Docker Compose y ejecuta la migración antes de admitir tráfico en el API.</p>
+    </header>
+    <section>
+      <h2>Inicio rápido</h2>
+      <ol>
+        <li>Clone el repositorio e instale Docker Engine con Compose v2.</li>
+        <li>Copie <code>.env.example</code> como <code>.env</code>.</li>
+        <li>Reemplace los secretos de desarrollo antes de publicar el servicio.</li>
+        <li>Ejecute <code>docker compose up -d --build</code>.</li>
+      </ol>
+      <pre><code>cp .env.example .env
+openssl rand -hex 32
+openssl rand -base64 32
+docker compose up -d --build</code></pre>
+    </section>
+    <section class="docs-grid">
+      <div><h2>Comprobar</h2><p><code>curl http://localhost:3001/health</code></p><p><code>curl http://localhost:3000/health</code></p></div>
+      <div><h2>Respaldar</h2><p>Respalde el volumen PostgreSQL y conserve la clave de cifrado fuera del servidor. Sin ella, los datos cifrados no se pueden recuperar.</p></div>
+    </section>
+    <aside><strong>Producción:</strong> use HTTPS mediante un proxy inverso, contraseñas únicas, una clave de cifrado custodiada y orígenes explícitos. No rote <code>DATA_ENCRYPTION_KEY</code> sin un procedimiento de recifrado.</aside>
+    <p>El README del repositorio contiene la arquitectura, variables, portabilidad y obligaciones completas de AGPLv3.</p>
+  </article>
+</BaseLayout>

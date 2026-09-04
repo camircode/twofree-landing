@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.astro/
+
+# Astro writes the build here when previewing; never committed.
+.output/
+
+# Build metadata written by the Jenkins buildx stage. It carries the pushed
+# digest and is regenerated on every build, so it has no business in git.
+metadata.json
+
+.DS_Store
+*.log
+
+# Anything that could hold a credential. Nothing in this repo needs one at
+# build time — every PUBLIC_* value is baked into a public page — so a .env
+# appearing here is a mistake worth keeping out of history.
+.env
+.env.*
