@@ -61,6 +61,19 @@ RUN pnpm build
 # path it needs under /tmp.
 FROM nginxinc/nginx-unprivileged:1.29-alpine
 
+# The base image's tag is rebuilt on nginx releases, not on Alpine security
+# updates, so its package tree is as old as the last nginx release. Trivy runs
+# with --ignore-unfixed and fails the build on HIGH or CRITICAL, so anything it
+# reports has a patch waiting in the Alpine repositories — libxml2 2.13.9-r0
+# and util-linux were exactly that. Upgrading here takes those patches instead
+# of writing an exception for a vulnerability that is already fixed.
+#
+# Back to uid 101 for the upgrade: apk needs to write to /lib/apk and /etc, and
+# this image's default user cannot. USER below restores the non-root runtime.
+USER root
+RUN apk upgrade --no-cache
+USER 101
+
 COPY deploy/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /src/dist /usr/share/nginx/html
 
