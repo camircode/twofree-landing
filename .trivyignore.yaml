@@ -1,4 +1,4 @@
-# Exceptions for the Trivy stage in the Jenkinsfile, which fails the build on
+# Exceptions for the Scan step of .github/workflows/ci.yml, which fails the build on
 # HIGH and CRITICAL findings that have a fix available.
 #
 # Empty on purpose: nothing is being waived today. Every entry added here must

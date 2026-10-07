@@ -21,8 +21,7 @@ not published yet fails in the `deps` stage of the Docker build.
 
 ## 1. How a change reaches the cluster
 
-Commit to `main` → **Jenkins polls every five minutes** (a webhook is impossible:
-the controller is only reachable over WireGuard, so GitHub cannot call it) →
+Push to `main` → **GitHub Actions** (`.github/workflows/ci.yml`) →
 `astro check` in a container → `docker buildx` push to GHCR **by digest** →
 smoke-test that digest → Trivy (HIGH/CRITICAL, `--ignore-unfixed`) → commit the
 digest into `manifests/twofree-landing/deployment.yaml` in `camircode/gitops` →
@@ -49,7 +48,7 @@ deployment history.
   `/home/camir/Desarrollo/infrastructure`.
 
 `pnpm-lock.yaml` **is** committed here (it resolves — nothing private is
-involved), and both the `Dockerfile` and the `Jenkinsfile` install with
+involved), and both the `Dockerfile` and the `.github/workflows/ci.yml` install with
 `--frozen-lockfile`. Any manifest change must commit the regenerated lockfile in
 the same commit, or the next build stops at the install step.
 
@@ -99,8 +98,8 @@ into a startup template.
 ## 4. Every `PUBLIC_*` value is baked in at build time
 
 `PUBLIC_SITE_URL`, `PUBLIC_WEB_URL`, `PUBLIC_SOURCE_URL` and
-`PUBLIC_GITHUB_REPOSITORY` are `--build-arg`s, set in the `Jenkinsfile`
-`environment` block. Astro inlines them into the HTML, so a build ARG is the
+`PUBLIC_GITHUB_REPOSITORY` are `--build-arg`s, set in the `env` block of
+`.github/workflows/ci.yml`. Astro inlines them into the HTML, so a build ARG is the
 right shape and a secret never is.
 
 `PUBLIC_SITE_URL` in particular becomes `site` in `astro.config.mjs`, which

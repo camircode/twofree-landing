@@ -16,8 +16,8 @@ dist
 .env
 .env.*
 
-# Delivery config: read by Jenkins and by humans, never by the build.
-Jenkinsfile
+# Delivery config: read by GitHub Actions and by humans, never by the build.
+.github
 .trivyignore.yaml
 README.md
 metadata.json

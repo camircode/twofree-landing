@@ -38,7 +38,7 @@ proves nothing about whether it will start in the cluster.
 
 Four build-time values, all public — Astro inlines them into the HTML, so none
 of them is or can be a secret. They are `--build-arg`s, set in the
-`environment` block of the `Jenkinsfile`:
+`env` block of `.github/workflows/ci.yml`:
 
 | Variable | Effect |
 | --- | --- |
@@ -52,7 +52,7 @@ new value, because by then the value is already inside the HTML.
 
 ## Deploying
 
-Push to `main`. Jenkins builds the image, pushes it to
+Push to `main`. GitHub Actions builds the image, pushes it to
 `ghcr.io/camircode/twofree-landing`, smoke-tests it by digest under the same
 uid and read-only filesystem the cluster uses, scans it with Trivy, and then
 commits the digest to `camircode/gitops`. Argo CD applies it.
